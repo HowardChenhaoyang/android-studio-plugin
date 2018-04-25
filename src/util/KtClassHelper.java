@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
+import org.jetbrains.kotlin.resolve.source.KotlinSourceElement;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.SimpleType;
 
@@ -68,38 +69,48 @@ public class KtClassHelper {
 //
 //        return valueParameters;
 //    }
-//
-//    public static List<ValueParameterDescriptor> findParams(KtClass ktClass) {
-//        List<KtElement> list = new ArrayList<KtElement>();
-//        list.add(ktClass);
-//        PsiElement[] psiElements = ktClass.getChildren();
-//        for (PsiElement psiElement : psiElements) {
-//            String text = psiElement.getText();
-//        }
-//        ResolveSession resolveSession = KotlinCacheService.Companion.getInstance(ktClass.getProject()).
-//                getResolutionFacade(list).getFrontendService(ResolveSession.class);
-//        ClassDescriptor classDescriptor = resolveSession.getClassDescriptor(ktClass, NoLookupLocation.FROM_IDE);
-//        Set<Name> functionnames = classDescriptor.getUnsubstitutedInnerClassesScope().getFunctionNames();
-//        Set<Name> functionnames1 = classDescriptor.getUnsubstitutedMemberScope().getFunctionNames();
-//        List<TypeParameterDescriptor> typeParameterDescriptors = classDescriptor.getDeclaredTypeParameters();
-//        ImplicitClassReceiver receiverValue = (ImplicitClassReceiver) classDescriptor.getThisAsReceiverParameter().getValue();
-//        SimpleType kotlinType = receiverValue.getType();
-//        kotlinType.getArguments();
-//        List<ValueParameterDescriptor> valueParameters = new ArrayList<ValueParameterDescriptor>();
-////        if (classDescriptor.isData()) {
-//        ConstructorDescriptor constructorDescriptor = classDescriptor.getUnsubstitutedPrimaryConstructor();
-//        Collection<SimpleFunctionDescriptor> simpleFunctionDescriptors = classDescriptor.getUnsubstitutedMemberScope().getContributedFunctions(Name.identifier("hellow"), NoLookupLocation.FROM_IDE);
-//        if (constructorDescriptor != null) {
-//            List<ValueParameterDescriptor> allParameters = constructorDescriptor.getValueParameters();
-//
-//            for (ValueParameterDescriptor parameter : allParameters) {
-//                valueParameters.add(parameter);
-//            }
-//        }
-////        }
-//
-//        return valueParameters;
-//    }
+
+    public static List<String> findConstructorParamNames(KtClass ktClass) {
+        List<KtElement> list = new ArrayList();
+        list.add(ktClass);
+        ResolveSession resolveSession = KotlinCacheService.Companion.getInstance(ktClass.getProject()).
+                getResolutionFacade(list).getFrontendService(ResolveSession.class);
+        ClassDescriptor classDescriptor = resolveSession.getClassDescriptor(ktClass, NoLookupLocation.FROM_IDE);
+        List<String> valueParameters = new ArrayList();
+        ConstructorDescriptor constructorDescriptor = classDescriptor.getUnsubstitutedPrimaryConstructor();
+        if (constructorDescriptor != null) {
+            List<ValueParameterDescriptor> allParameters = constructorDescriptor.getValueParameters();
+
+            for (ValueParameterDescriptor parameter : allParameters) {
+                valueParameters.add(parameter.getName().toString());
+            }
+        }
+        return valueParameters;
+    }
+
+    public static List<PropertyDescriptor> getFields(KtClass ktClass) {
+        List<KtElement> list = new ArrayList<KtElement>();
+        list.add(ktClass);
+        ResolveSession resolveSession = KotlinCacheService.Companion.getInstance(ktClass.getProject()).
+                getResolutionFacade(list).getFrontendService(ResolveSession.class);
+        ClassDescriptor classDescriptor = resolveSession.getClassDescriptor(ktClass, NoLookupLocation.FROM_IDE);
+        MemberScope memberScope = classDescriptor.getUnsubstitutedMemberScope();
+        Set<Name> variableNames = memberScope.getVariableNames();
+        Iterator<Name> nameIterator = variableNames.iterator();
+        List<PropertyDescriptor> simpleFunctionDescriptors = new ArrayList<>();
+        while (nameIterator.hasNext()) {
+            Name name = nameIterator.next();
+            Collection<PropertyDescriptor> collection = memberScope.getContributedVariables(name, NoLookupLocation.FROM_IDE);
+            if (!collection.isEmpty()) {
+                PropertyDescriptor propertyDescriptor = collection.iterator().next();
+                KotlinSourceElement kotlinSourceElemen = (KotlinSourceElement) propertyDescriptor.getSource();
+                if (kotlinSourceElemen.getPsi().toString().equals("PROPERTY")){
+                    simpleFunctionDescriptors.add(propertyDescriptor);
+                }
+            }
+        }
+        return simpleFunctionDescriptors;
+    }
 
     public static List<SimpleFunctionDescriptor> getMethods(KtClass ktClass) {
         List<KtElement> list = new ArrayList<KtElement>();

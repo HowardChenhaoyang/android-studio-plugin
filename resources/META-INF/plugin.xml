@@ -37,6 +37,9 @@
             description="RetrofitKotlinGenerator">
       <add-to-group group-id="GenerateGroup" anchor="last"/>
     </action>
+    <action id="DataClassGenerator" class="DataClassGenerator" text="DataClassGenerator" description="kotlin普通类转为data类">
+      <add-to-group group-id="GenerateGroup" anchor="first"/>
+    </action>
   </actions>
 
 </idea-plugin>
