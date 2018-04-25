@@ -57,17 +57,26 @@ public class RetrofitKotlinGenerator extends AnAction {
     }
 
     private void deleteExistClass(PsiElement focusedPsiElement, KtClass focusedKtClass) {
-        PsiElement[] psiElements = psiFile.getChildren();
-        if (psiElements == null || psiElements.length <= 1) {
-            return;
-        }
-        for (PsiElement psiElement : psiElements) {
-            KtClass ktClass = KtClassHelper.getKtClassForElement(psiElement);
-            if (ktClass == null) continue;
-            if (ktClass.getName().equals(focusedKtClass.getName() + "Impl")) {
-                ktClass.delete();
-                break;
+        new WriteCommandAction.Simple(ktClass.getProject(), ktClass.getContainingFile()) {
+            @Override
+            protected void run() throws Throwable {
+                PsiElement[] psiElements = psiFile.getChildren();
+                if (psiElements == null || psiElements.length <= 1) {
+                    return;
+                }
+                KtClass willDeletektClass = null;
+                for (PsiElement psiElement : psiElements) {
+                    KtClass ktClass = KtClassHelper.getKtClassForElement(psiElement);
+                    if (ktClass == null) continue;
+                    if (ktClass.getName().equals(focusedKtClass.getName() + "Impl")) {
+                        willDeletektClass = ktClass;
+                        break;
+                    }
+                }
+                if (willDeletektClass != null) {
+                    willDeletektClass.delete();
+                }
             }
-        }
+        }.execute();
     }
 }
