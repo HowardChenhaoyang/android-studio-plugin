@@ -44,11 +44,7 @@ public class KotlinCodeGenerator {
 
     private List<String> getImports() {
         List<String> imports = new ArrayList<>();
-        imports.add("com.mooyoo.r2.net.RetrofitManager");
-        imports.add("android.content.Context");
-        imports.add("com.trello.rxlifecycle.ActivityLifecycleProvider");
-        imports.add("com.mooyoo.r2.net.RetroitRequset");
-        imports.add("android.app.Activity");
+        imports.add("com.example.code.net.RetrofitManager");
         return imports;
     }
 
@@ -99,7 +95,6 @@ public class KotlinCodeGenerator {
         stringBuilder.append("fun ");
         stringBuilder.append(simpleFunctionDescriptor.getName());
         stringBuilder.append("(");
-        stringBuilder.append("activity: Activity, context:Context, activityLifecycleProvider: ActivityLifecycleProvider");
         List<ValueParameterDescriptor> valueParameterDescriptors = simpleFunctionDescriptor.getValueParameters();
         StringBuilder paramStringBuilder = new StringBuilder();
         for (int index = 0; index < valueParameterDescriptors.size(); index++) {
@@ -119,15 +114,14 @@ public class KotlinCodeGenerator {
         stringBuilder.append(")");
         String returnType = simpleFunctionDescriptor.getReturnType().toString();
         if (!"Unit".equals(returnType)) {
-            String tempReturnType = returnType.replace("HttpResultBean<", "");
-            stringBuilder.append(": " + tempReturnType.substring(0, tempReturnType.length() - 1));
+            stringBuilder.append(": " + returnType);
         }
         stringBuilder.append("{\n");
         stringBuilder.append("return ");
-        stringBuilder.append("RetrofitManager.getInstance().retrofit.create(");
+        stringBuilder.append("RetrofitManager.retrofit.create(");
         stringBuilder.append(mClass.getName() + "::class.java)\n.");
         stringBuilder.append(simpleFunctionDescriptor.getName() + "(" + paramStringBuilder.toString() + ")\n");
-        stringBuilder.append(".compose(RetroitRequset.applySchedulers(activity, activityLifecycleProvider, true))");
+        stringBuilder.append(".compose(RetrofitManager.threadSwitch())");
         stringBuilder.append("}");
         return stringBuilder.toString();
     }
