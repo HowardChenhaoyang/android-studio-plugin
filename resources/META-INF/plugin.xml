@@ -30,15 +30,9 @@
   <depends>org.jetbrains.kotlin</depends>
   <actions>
     <!-- Add your actions here -->
-    <action id="RetrofitActionID" class="RetrofitJavaGenerator" text="RetrofitJavaGenerator" description="自动生成retrofit代码">
-      <add-to-group group-id="GenerateGroup" anchor="first"/>
-    </action>
     <action id="RetrofitKotlinGenerator" class="RetrofitKotlinGenerator" text="RetrofitKotlinGenerator"
             description="RetrofitKotlinGenerator">
       <add-to-group group-id="GenerateGroup" anchor="last"/>
-    </action>
-    <action id="DataClassGenerator" class="DataClassGenerator" text="DataClassGenerator" description="kotlin普通类转为data类">
-      <add-to-group group-id="GenerateGroup" anchor="first"/>
     </action>
   </actions>
 

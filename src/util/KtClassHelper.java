@@ -21,22 +21,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.asJava.elements.KtLightElement;
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.idea.internal.Location;
-import org.jetbrains.kotlin.incremental.components.LookupLocation;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
-import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtClass;
 import org.jetbrains.kotlin.psi.KtElement;
-import org.jetbrains.kotlin.psi.KtProperty;
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
-import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver;
-import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver;
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement;
-import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.kotlin.types.SimpleType;
 
 import java.util.*;
 
